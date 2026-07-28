@@ -30,10 +30,20 @@ const Navbar = ({ onLogout }) => {
             <button className="nav-link" onClick={() => navigate('/my-requests')}>
               My Requests
             </button>
+            <button className="nav-link" onClick={() => navigate('/history')}>
+              History
+            </button>
+            <button className="nav-link" onClick={() => navigate('/feedback')}>
+              Feedback
+            </button>
           </>
         )}
+
         {user?.role === 'official' && (
           <>
+            <button className="nav-link" onClick={() => navigate('/dashboard')}>
+              Dashboard
+            </button>
             <button className="nav-link" onClick={() => navigate('/requests')}>
               All Requests
             </button>
@@ -46,6 +56,9 @@ const Navbar = ({ onLogout }) => {
 
       <div className="nav-right">
         <NotificationBell />
+        <button className="nav-link" onClick={() => navigate('/preferences')}>
+          ⚙️
+        </button>
         <div className="nav-user">
           <span className="user-name">{user?.name}</span>
           <span className="user-role">{user?.role}</span>

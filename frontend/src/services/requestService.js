@@ -33,3 +33,8 @@ export const updateRequestStatus = async (id, statusData) => {
   const response = await API.patch(`/requests/${id}/status`, statusData);
   return response.data;
 };
+
+export const getDashboardSummary = async () => {
+  const response = await API.get('/requests/dashboard');
+  return response.data;
+};

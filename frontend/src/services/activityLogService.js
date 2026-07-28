@@ -15,3 +15,8 @@ export const getRequestActivityLogs = async (requestId) => {
   const response = await API.get(`/activity-log/${requestId}`);
   return response.data;
 };
+
+export const getDashboardSummary = async () => {
+  const response = await API.get('/requests/dashboard');
+  return response.data;
+};

@@ -1,3 +1,9 @@
+import NotificationPreferences from './pages/NotificationPreferences';
+import FeedbackHistory from './pages/FeedbackHistory';
+import RequestHistory from './pages/RequestHistory';
+import Dashboard from './pages/Dashboard';
+import RequestDetail from './pages/RequestDetail';
+import Register from './pages/Register';
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { isLoggedIn, getUser, getUserRole } from './utils/auth';
@@ -24,7 +30,7 @@ function App() {
   const HomeRedirect = () => {
     if (!loggedIn) return <Navigate to="/login" replace />;
     const role = getUserRole();
-    if (role === 'official') return <Navigate to="/requests" replace />;
+    if (role === 'official') return <Navigate to="/dashboard" replace />;
     return <Navigate to="/my-requests" replace />;
   };
 
@@ -40,6 +46,12 @@ function App() {
             path="/login"
             element={
               loggedIn ? <HomeRedirect /> : <Login onLoginSuccess={handleLoginSuccess} />
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              loggedIn ? <HomeRedirect /> : <Register />
             }
           />
 
@@ -62,6 +74,15 @@ function App() {
           />
 
           <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['official']}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/requests"
             element={
               <ProtectedRoute allowedRoles={['official']}>
@@ -75,6 +96,42 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['official']}>
                 <ActivityLogPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/request/:id"
+            element={
+              <ProtectedRoute allowedRoles={['citizen', 'official']}>
+                <RequestDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <RequestHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/feedback"
+            element={
+              <ProtectedRoute allowedRoles={['citizen']}>
+                <FeedbackHistory />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="/preferences"
+            element={
+              <ProtectedRoute allowedRoles={['citizen', 'official']}>
+                <NotificationPreferences />
               </ProtectedRoute>
             }
           />

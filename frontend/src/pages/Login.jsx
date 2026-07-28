@@ -128,9 +128,9 @@ const Login = ({ onLoginSuccess }) => {
           </button>
         </form>
 
-        <div className="login-footer">
-          <p>Don't have an account? Contact your village administrator.</p>
-        </div>
+      <div className="login-footer">
+          <p>Don't have an account? <span className="register-link" onClick={() => navigate('/register')}>Register here</span></p>
+        </div> 
       </div>
     </div>
   );
