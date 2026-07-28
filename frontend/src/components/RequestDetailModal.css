@@ -1,0 +1,259 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 30px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  padding: 4px 8px;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-loading {
+  text-align: center;
+  padding: 60px 0;
+  color: #999;
+  font-size: 14px;
+}
+
+.modal-header {
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 10px 0;
+}
+
+.modal-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e8e8e8;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.2s;
+}
+
+.tab-btn.active {
+  color: #4361ee;
+  border-bottom-color: #4361ee;
+}
+
+.tab-btn:hover {
+  color: #333;
+}
+
+.modal-body {
+  min-height: 200px;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.detail-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #777;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #333;
+  text-transform: capitalize;
+}
+
+.detail-description {
+  padding: 8px 0;
+}
+
+.detail-description p {
+  font-size: 14px;
+  color: #444;
+  line-height: 1.6;
+  margin-top: 6px;
+}
+
+.status-update-section {
+  padding-top: 16px;
+  border-top: 1px solid #e8e8e8;
+  margin-top: 10px;
+}
+
+.status-action-btn {
+  padding: 10px 24px;
+  background: #4361ee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-action-btn:hover {
+  background: #3a56d4;
+}
+
+.activity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.no-activity {
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  padding: 30px 0;
+}
+
+.activity-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-desc {
+  font-size: 13px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.activity-user {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.activity-time {
+  font-size: 11px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.status-update-form {
+  margin: 24px 0;
+  padding: 20px;
+  border: 1px solid #dbe5ee;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.status-update-form h3 {
+  margin: 0 0 16px;
+  color: #1d3557;
+}
+
+.status-update-form label {
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.status-update-form select,
+.status-update-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font: inherit;
+  outline: none;
+}
+
+.status-update-form select:focus,
+.status-update-form textarea:focus {
+  border-color: #2563eb;
+}
+
+.status-update-form textarea {
+  resize: vertical;
+}
+
+.status-update-form button {
+  margin-top: 16px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status-update-form button:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.status-update-form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-error {
+  margin: 12px 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}

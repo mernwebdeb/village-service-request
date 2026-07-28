@@ -1,0 +1,61 @@
+.activity-log-page {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 20px;
+}
+
+.log-filters {
+  margin-bottom: 16px;
+}
+
+.log-filters select {
+  padding: 8px 14px;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #333;
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.log-filters select:focus {
+  outline: none;
+  border-color: #4361ee;
+}
+
+.log-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px 0;
+}
+
+.log-pagination .page-btn {
+  padding: 8px 18px;
+  background: #4361ee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.log-pagination .page-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.log-pagination .page-info {
+  font-size: 13px;
+  color: #666;
+}

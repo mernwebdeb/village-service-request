@@ -1,0 +1,80 @@
+.confirmation-container {
+  max-width: 500px;
+  margin: 60px auto;
+  padding: 40px 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.confirmation-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.confirmation-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 10px;
+}
+
+.confirmation-text {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.confirmation-info {
+  background: #f0f7ff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  text-align: left;
+  margin-bottom: 24px;
+}
+
+.confirmation-info p {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.confirmation-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.confirmation-info li {
+  font-size: 13px;
+  color: #555;
+  padding: 4px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.confirmation-info li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: #4361ee;
+}
+
+.btn-new-request {
+  padding: 12px 28px;
+  background: #4361ee;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-new-request:hover {
+  background: #3a56d4;
+}
