@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-
 const Request = require('../models/Request');
 const ActivityLog = require('../models/ActivityLog');
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 const auth = require('../middleware/auth');
+const roleCheck = require('../middleware/roleCheck');
+const { sendEmail, getStatusChangeEmail, getNewRequestEmail } = require('../utils/emailService');
 
 // POST /api/requests — Create a new request
 router.post('/', auth, async (req, res) => {
@@ -21,6 +23,7 @@ router.post('/', auth, async (req, res) => {
     });
 
     const savedRequest = await newRequest.save();
+
     // Log activity
     await ActivityLog.create({
       request: savedRequest._id,
@@ -28,6 +31,24 @@ router.post('/', auth, async (req, res) => {
       action: 'created',
       description: `created a new request: "${savedRequest.title}"`,
     });
+
+    // Email notification to officials
+    try {
+      const officials = await User.find({ role: 'official' });
+      for (const official of officials) {
+        const emailHtml = getNewRequestEmail(
+          official.name,
+          savedRequest.title,
+          req.user.name,
+          savedRequest.category,
+          savedRequest.urgency
+        );
+        sendEmail(official.email, `New Request: ${savedRequest.title}`, emailHtml);
+      }
+    } catch (emailError) {
+      console.error('Email notification failed:', emailError.message);
+    }
+
     res.status(201).json({
       message: 'Request submitted successfully',
       request: savedRequest,
@@ -50,6 +71,39 @@ router.get('/my', auth, async (req, res) => {
     res.json({ requests });
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch requests.' });
+  }
+});
+
+// GET /api/requests/dashboard — Dashboard summary (officials only)
+router.get('/dashboard', auth, roleCheck('official'), async (req, res) => {
+  try {
+    const total = await Request.countDocuments();
+    const pending = await Request.countDocuments({ status: 'pending' });
+    const inProgress = await Request.countDocuments({ status: 'in-progress' });
+    const resolved = await Request.countDocuments({ status: 'resolved' });
+    const rejected = await Request.countDocuments({ status: 'rejected' });
+
+    const byCategory = await Request.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]);
+
+    const recent = await Request.find()
+      .populate('citizen', 'name email')
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    res.json({
+      total,
+      pending,
+      inProgress,
+      resolved,
+      rejected,
+      byCategory,
+      recent,
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch dashboard data.' });
   }
 });
 
@@ -79,12 +133,8 @@ router.get('/:id', auth, async (req, res) => {
 });
 
 // GET /api/requests — Get all requests (officials only) with filters, sort & pagination
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, roleCheck('official'), async (req, res) => {
   try {
-    if (req.user.role !== 'official') {
-      return res.status(403).json({ message: 'Access denied. Officials only.' });
-    }
-
     const { status, category, urgency, sort, search, page = 1, limit = 10 } = req.query;
 
     const filter = {};
@@ -128,76 +178,71 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// Update request status
-router.patch('/:id/status', auth, async (req, res) => {
+// PATCH /api/requests/:id/status — Update request status (officials only)
+router.patch('/:id/status', auth, roleCheck('official'), async (req, res) => {
   try {
     const { status, resolutionNote } = req.body;
 
-    const allowedStatuses = [
-      'Pending',
-      'In Progress',
-      'Resolved',
-      'Rejected',
-    ];
-
-    if (!allowedStatuses.includes(status)) {
-      return res.status(400).json({
-        message: 'Invalid status value',
-      });
+    const validStatuses = ['pending', 'in-progress', 'resolved', 'rejected'];
+    if (!status || !validStatuses.includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value.' });
     }
 
-    const request = await Request.findById(req.params.id)
-      .populate('citizen', 'name email')
-      .populate('assignedTo', 'name email');
-
+    const request = await Request.findById(req.params.id);
     if (!request) {
-      return res.status(404).json({
-        message: 'Request not found',
-      });
+      return res.status(404).json({ message: 'Request not found.' });
     }
 
-    const previousStatus = request.status;
+    const oldStatus = request.status;
 
     request.status = status;
-
-    if (resolutionNote !== undefined) {
+    request.assignedTo = req.user._id;
+    if (resolutionNote) {
       request.resolutionNote = resolutionNote;
     }
 
-    await request.save();
+    const updatedRequest = await request.save();
 
-    // Activity log create
+    // Log activity
     await ActivityLog.create({
       request: request._id,
-      performedBy: req.user.id,
-      action: 'Status Updated',
-      description: `Request status changed from ${previousStatus} to ${status}`,
-      previousStatus,
+      performedBy: req.user._id,
+      action: status === 'resolved' ? 'resolved' : status === 'rejected' ? 'rejected' : 'status-change',
+      description: `changed status from "${oldStatus}" to "${status}"`,
+      previousStatus: oldStatus,
       newStatus: status,
     });
 
-    // Citizen notification create
+    // Notify citizen
     await Notification.create({
-      user: request.citizen._id,
+      user: request.citizen,
       request: request._id,
-      message: `Your request "${request.title}" status has been updated to ${status}.`,
+      message: `Your request "${request.title}" status changed to ${status}`,
     });
 
-    const updatedRequest = await Request.findById(request._id)
-      .populate('citizen', 'name email')
-      .populate('assignedTo', 'name email');
+    // Email notification to citizen
+    try {
+      const citizen = await User.findById(request.citizen);
+      if (citizen) {
+        const emailHtml = getStatusChangeEmail(
+          citizen.name,
+          request.title,
+          oldStatus,
+          status,
+          resolutionNote || ''
+        );
+        sendEmail(citizen.email, `Request Updated: ${request.title}`, emailHtml);
+      }
+    } catch (emailError) {
+      console.error('Email notification failed:', emailError.message);
+    }
 
-    res.status(200).json({
+    res.json({
       message: 'Request status updated successfully',
       request: updatedRequest,
     });
   } catch (error) {
-    console.error('Status update error:', error);
-
-    res.status(500).json({
-      message: 'Failed to update request status',
-      error: error.message,
-    });
+    res.status(500).json({ message: 'Failed to update request status.' });
   }
 });
 

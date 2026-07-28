@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+const preferencesRoutes = require('./routes/preferences');
+const feedbackRoutes = require('./routes/feedback');
 const authRoutes = require('./routes/auth');
 const requestRoutes = require('./routes/requests');
 const messageRoutes = require('./routes/messages');
@@ -22,6 +24,8 @@ app.use('/api/requests', requestRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/activity-log', activityLogRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/preferences', preferencesRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

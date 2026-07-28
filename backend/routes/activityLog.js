@@ -1,14 +1,14 @@
+const roleCheck = require('../middleware/roleCheck');
 const express = require('express');
 const router = express.Router();
 const ActivityLog = require('../models/ActivityLog');
 const auth = require('../middleware/auth');
 
 // GET /api/activity-log — Get all activity logs (officials only)
-router.get('/', auth, async (req, res) => {
+router.get('/', auth, roleCheck('official'), async (req, res) => {
   try {
-    if (req.user.role !== 'official') {
       return res.status(403).json({ message: 'Access denied. Officials only.' });
-    }
+    
 
     const { requestId, action, page = 1, limit = 20 } = req.query;
 

@@ -16,6 +16,19 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'Name, email and password are required.' });
     }
 
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+    }
+
+    const validRoles = ['citizen', 'official'];
+    if (role && !validRoles.includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Must be citizen or official.' });
+    }
+
+    if (role === 'official' && !department) {
+      return res.status(400).json({ message: 'Department is required for officials.' });
+    }
+
     const existingUser = await User.findOne({ email: email.toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ message: 'User with this email already exists.' });
